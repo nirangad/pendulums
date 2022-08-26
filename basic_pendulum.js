@@ -14,7 +14,6 @@ let angVelocity;
 let angAcceleration;
 
 function setup() {
-  frameRate(4);
   CANVAS_SIZE = 500;
   createCanvas(CANVAS_SIZE, CANVAS_SIZE);
   background(40);
