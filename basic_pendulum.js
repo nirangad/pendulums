@@ -57,5 +57,4 @@ function draw() {
   pendPosition = createVector(ropeLength * sin(theta), ropeLength * cos(theta));
   line(0, 0, pendPosition.x, pendPosition.y);
   ellipse(pendPosition.x, pendPosition.y, pendRadius, pendRadius);
-  //save(`frame_${frameCount}.png`);
 }
