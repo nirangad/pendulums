@@ -1,6 +1,6 @@
 let CANVAS_SIZE;
 
-let origin;
+let anchor;
 let startPosition;
 
 let gravity;
@@ -17,29 +17,17 @@ function setup() {
   createCanvas(CANVAS_SIZE, CANVAS_SIZE);
   background(color1);
 
-  gravity = 1;
+  gravity = createVector(0, 0.01);
   energyLoss = 0.005;
 
-  origin = createVector(width / 2, 0);
-  startPosition = createVector(300, 350);
+  anchor = createVector(width / 2, 0);
+  startPosition = createVector(350, 200);
 
   stroke(color2);
   fill(color2);
 
-  pendulum = new Particle(startPosition, 25);
-  spring = new Spring(200, origin.dist(startPosition), origin, startPosition);
-  spring.show();
-  pendulum.show();
-
-  let a = createVector(0, 0);
-  let b = createVector(3, 4);
-  let c = p5.Vector.sub(b, a);
-  console.table(a);
-  console.table(b);
-  console.table(c);
-  console.table(c.mag());
-  c.normalize();
-  console.table(c);
+  pendulum = new Particle(startPosition, 25, 2);
+  spring = new Spring(150, anchor.dist(startPosition), anchor, startPosition);
 }
 
 function draw() {
@@ -51,14 +39,18 @@ function draw() {
   spring.show();
   pendulum.show();
 
-  let springForce = -1 * spring.K * spring.strechedLength();
-  let gravityForce =
-    (pendulum.weight * gravity * pendulum.position.x) / spring.length;
-  let accOrigin = (springForce - gravityForce) / pendulum.weight;
-  pendulum.velocity += accOrigin;
-  pendulum.velocity *= 1 - energyLoss;
-  spring.length += pendulum.velocity;
-  p5.Vector.add(pendulum.position, pendulum.velocity);
+  let springForceVector = p5.Vector.sub(pendulum.position, anchor);
+  springForceVector.normalize();
+
+  let springForce = springForceVector.mult(
+    -1 * spring.K * spring.strechedLength()
+  );
+
+  let gravityForce = gravity.normalize().mult(pendulum.weight);
+
+  pendulum.velocity.add(springForce).add(gravityForce);
+  pendulum.velocity.mult(1 - energyLoss);
+  pendulum.position.add(pendulum.velocity);
 
   spring.update(pendulum.position);
 }
